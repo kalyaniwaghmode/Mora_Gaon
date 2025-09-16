@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/MarkerCluster.css">
+        <link rel="stylesheet" href="css/MarkerCluster.Default.css">
+        <link rel="stylesheet" href="css/leaflet.photon.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet.photon.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="js/leaflet.markercluster.js"></script>
+        <script src="data/kalyani_buildingsbuilding_main_bu_1.js"></script>
+        <script src="data/kalyani_neighbourhood__neighbourhood_05_2.js"></script>
+        <script src="data/kalyani_roadsroad_3.js"></script>
+        <script src="data/kalyani_vegetationtree_4.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:false, maxZoom:28, minZoom:1
+        }).fitBounds([[19.114757432867634,72.81877248413696],[19.119502757885808,72.82700599059359]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        // remove popup's row if "visible-with-data"
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        // add class to format popup if it contains media
+		function addClassToPopupIfMedia(content, popup) {
+			var tempDiv = document.createElement('div');
+			tempDiv.innerHTML = content;
+			if (tempDiv.querySelector('td img')) {
+				popup._contentNode.classList.add('media');
+					// Delay to force the redraw
+					setTimeout(function() {
+						popup.update();
+					}, 10);
+			} else {
+				popup._contentNode.classList.remove('media');
+			}
+		}
+        var zoomControl = L.control.zoom({
+            position: 'topleft'
+        }).addTo(map);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'feet',
+            secondaryLengthUnit: 'miles',
+            primaryAreaUnit: 'sqfeet',
+            secondaryAreaUnit: 'sqmiles'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0].innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0].className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_GoogleSatellite_0');
+        map.getPane('pane_GoogleSatellite_0').style.zIndex = 400;
+        var layer_GoogleSatellite_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleSatellite_0',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+        });
+        layer_GoogleSatellite_0;
+        map.addLayer(layer_GoogleSatellite_0);
+        function pop_kalyani_buildingsbuilding_main_bu_1(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">fid</th>\
+                        <td>' + (feature.properties['fid'] !== null ? autolinker.link(String(feature.properties['fid']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">id</th>\
+                        <td>' + (feature.properties['id'] !== null ? autolinker.link(String(feature.properties['id']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">bldg_id</th>\
+                        <td>' + (feature.properties['bldg_id'] !== null ? autolinker.link(String(feature.properties['bldg_id']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">bldg_use</th>\
+                        <td>' + (feature.properties['bldg_use'] !== null ? autolinker.link(String(feature.properties['bldg_use']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">wall_ml</th>\
+                        <td>' + (feature.properties['wall_ml'] !== null ? autolinker.link(String(feature.properties['wall_ml']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">bldg_ht</th>\
+                        <td>' + (feature.properties['bldg_ht'] !== null ? autolinker.link(String(feature.properties['bldg_ht']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">bldg_flr</th>\
+                        <td>' + (feature.properties['bldg_flr'] !== null ? autolinker.link(String(feature.properties['bldg_flr']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">bldg_clr</th>\
+                        <td>' + (feature.properties['bldg_clr'] !== null ? autolinker.link(String(feature.properties['bldg_clr']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">roof_ml</th>\
+                        <td>' + (feature.properties['roof_ml'] !== null ? autolinker.link(String(feature.properties['roof_ml']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">bldg_fp</th>\
+                        <td>' + (feature.properties['bldg_fp'] !== null ? autolinker.link(String(feature.properties['bldg_fp']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">no_hh</th>\
+                        <td>' + (feature.properties['no_hh'] !== null ? autolinker.link(String(feature.properties['no_hh']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">cool_sys</th>\
+                        <td>' + (feature.properties['cool_sys'] !== null ? autolinker.link(String(feature.properties['cool_sys']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">bldg_cond</th>\
+                        <td>' + (feature.properties['bldg_cond'] !== null ? autolinker.link(String(feature.properties['bldg_cond']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">bldg_area</th>\
+                        <td>' + (feature.properties['bldg_area'] !== null ? autolinker.link(String(feature.properties['bldg_area']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_kalyani_buildingsbuilding_main_bu_1_0(feature) {
+            switch(String(feature.properties['bldg_clr'])) {
+                case 'beige':
+                    return {
+                pane: 'pane_kalyani_buildingsbuilding_main_bu_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(202,0,32,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'brown':
+                    return {
+                pane: 'pane_kalyani_buildingsbuilding_main_bu_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(230,110,97,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'grey':
+                    return {
+                pane: 'pane_kalyani_buildingsbuilding_main_bu_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(248,195,172,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'orange':
+                    return {
+                pane: 'pane_kalyani_buildingsbuilding_main_bu_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'white':
+                    return {
+                pane: 'pane_kalyani_buildingsbuilding_main_bu_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(209,209,209,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'yellow':
+                    return {
+                pane: 'pane_kalyani_buildingsbuilding_main_bu_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(145,145,145,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_kalyani_buildingsbuilding_main_bu_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(64,64,64,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_kalyani_buildingsbuilding_main_bu_1');
+        map.getPane('pane_kalyani_buildingsbuilding_main_bu_1').style.zIndex = 401;
+        map.getPane('pane_kalyani_buildingsbuilding_main_bu_1').style['mix-blend-mode'] = 'normal';
+        var layer_kalyani_buildingsbuilding_main_bu_1 = new L.geoJson(json_kalyani_buildingsbuilding_main_bu_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_kalyani_buildingsbuilding_main_bu_1',
+            layerName: 'layer_kalyani_buildingsbuilding_main_bu_1',
+            pane: 'pane_kalyani_buildingsbuilding_main_bu_1',
+            onEachFeature: pop_kalyani_buildingsbuilding_main_bu_1,
+            style: style_kalyani_buildingsbuilding_main_bu_1_0,
+        });
+        bounds_group.addLayer(layer_kalyani_buildingsbuilding_main_bu_1);
+        map.addLayer(layer_kalyani_buildingsbuilding_main_bu_1);
+        function pop_kalyani_neighbourhood__neighbourhood_05_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">fid</th>\
+                        <td>' + (feature.properties['fid'] !== null ? autolinker.link(String(feature.properties['fid']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">nei_id</th>\
+                        <td>' + (feature.properties['nei_id'] !== null ? autolinker.link(String(feature.properties['nei_id']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">name</th>\
+                        <td>' + (feature.properties['name'] !== null ? autolinker.link(String(feature.properties['name']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">typo</th>\
+                        <td>' + (feature.properties['typo'] !== null ? autolinker.link(String(feature.properties['typo']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">area</th>\
+                        <td>' + (feature.properties['area'] !== null ? autolinker.link(String(feature.properties['area']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">no_bldg</th>\
+                        <td>' + (feature.properties['no_bldg'] !== null ? autolinker.link(String(feature.properties['no_bldg']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">pop</th>\
+                        <td>' + (feature.properties['pop'] !== null ? autolinker.link(String(feature.properties['pop']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">density</th>\
+                        <td>' + (feature.properties['density'] !== null ? autolinker.link(String(feature.properties['density']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_kalyani_neighbourhood__neighbourhood_05_2_0() {
+            return {
+                pane: 'pane_kalyani_neighbourhood__neighbourhood_05_2',
+                opacity: 1,
+                color: 'rgba(77,175,74,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 4.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_kalyani_neighbourhood__neighbourhood_05_2');
+        map.getPane('pane_kalyani_neighbourhood__neighbourhood_05_2').style.zIndex = 402;
+        map.getPane('pane_kalyani_neighbourhood__neighbourhood_05_2').style['mix-blend-mode'] = 'normal';
+        var layer_kalyani_neighbourhood__neighbourhood_05_2 = new L.geoJson(json_kalyani_neighbourhood__neighbourhood_05_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_kalyani_neighbourhood__neighbourhood_05_2',
+            layerName: 'layer_kalyani_neighbourhood__neighbourhood_05_2',
+            pane: 'pane_kalyani_neighbourhood__neighbourhood_05_2',
+            onEachFeature: pop_kalyani_neighbourhood__neighbourhood_05_2,
+            style: style_kalyani_neighbourhood__neighbourhood_05_2_0,
+        });
+        bounds_group.addLayer(layer_kalyani_neighbourhood__neighbourhood_05_2);
+        map.addLayer(layer_kalyani_neighbourhood__neighbourhood_05_2);
+        function pop_kalyani_roadsroad_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">fid</th>\
+                        <td>' + (feature.properties['fid'] !== null ? autolinker.link(String(feature.properties['fid']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">id</th>\
+                        <td>' + (feature.properties['id'] !== null ? autolinker.link(String(feature.properties['id']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ro_name</th>\
+                        <td>' + (feature.properties['ro_name'] !== null ? autolinker.link(String(feature.properties['ro_name']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ro_width</th>\
+                        <td>' + (feature.properties['ro_width'] !== null ? autolinker.link(String(feature.properties['ro_width']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ro_ml</th>\
+                        <td>' + (feature.properties['ro_ml'] !== null ? autolinker.link(String(feature.properties['ro_ml']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ro_typo</th>\
+                        <td>' + (feature.properties['ro_typo'] !== null ? autolinker.link(String(feature.properties['ro_typo']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_kalyani_roadsroad_3_0() {
+            return {
+                pane: 'pane_kalyani_roadsroad_3',
+                opacity: 1,
+                color: 'rgba(196,60,57,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_kalyani_roadsroad_3');
+        map.getPane('pane_kalyani_roadsroad_3').style.zIndex = 403;
+        map.getPane('pane_kalyani_roadsroad_3').style['mix-blend-mode'] = 'normal';
+        var layer_kalyani_roadsroad_3 = new L.geoJson(json_kalyani_roadsroad_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_kalyani_roadsroad_3',
+            layerName: 'layer_kalyani_roadsroad_3',
+            pane: 'pane_kalyani_roadsroad_3',
+            onEachFeature: pop_kalyani_roadsroad_3,
+            style: style_kalyani_roadsroad_3_0,
+        });
+        bounds_group.addLayer(layer_kalyani_roadsroad_3);
+        map.addLayer(layer_kalyani_roadsroad_3);
+        function pop_kalyani_vegetationtree_4(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">fid</th>\
+                        <td>' + (feature.properties['fid'] !== null ? autolinker.link(String(feature.properties['fid']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">veg_id</th>\
+                        <td>' + (feature.properties['veg_id'] !== null ? autolinker.link(String(feature.properties['veg_id']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">name</th>\
+                        <td>' + (feature.properties['name'] !== null ? autolinker.link(String(feature.properties['name']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">girth_rad</th>\
+                        <td>' + (feature.properties['girth_rad'] !== null ? autolinker.link(String(feature.properties['girth_rad']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">crown_rad</th>\
+                        <td>' + (feature.properties['crown_rad'] !== null ? autolinker.link(String(feature.properties['crown_rad']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">species</th>\
+                        <td>' + (feature.properties['species'] !== null ? autolinker.link(String(feature.properties['species']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">seas_type</th>\
+                        <td>' + (feature.properties['seas_type'] !== null ? autolinker.link(String(feature.properties['seas_type']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">flaura_typ</th>\
+                        <td>' + (feature.properties['flaura_typ'] !== null ? autolinker.link(String(feature.properties['flaura_typ']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_kalyani_vegetationtree_4_0() {
+            return {
+                pane: 'pane_kalyani_vegetationtree_4',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(125,139,143,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_kalyani_vegetationtree_4');
+        map.getPane('pane_kalyani_vegetationtree_4').style.zIndex = 404;
+        map.getPane('pane_kalyani_vegetationtree_4').style['mix-blend-mode'] = 'normal';
+        var layer_kalyani_vegetationtree_4 = new L.geoJson(json_kalyani_vegetationtree_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_kalyani_vegetationtree_4',
+            layerName: 'layer_kalyani_vegetationtree_4',
+            pane: 'pane_kalyani_vegetationtree_4',
+            onEachFeature: pop_kalyani_vegetationtree_4,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_kalyani_vegetationtree_4_0(feature));
+            },
+        });
+        var cluster_kalyani_vegetationtree_4 = new L.MarkerClusterGroup({showCoverageOnHover: false,
+            spiderfyDistanceMultiplier: 2});
+        cluster_kalyani_vegetationtree_4.addLayer(layer_kalyani_vegetationtree_4);
+
+        bounds_group.addLayer(layer_kalyani_vegetationtree_4);
+        cluster_kalyani_vegetationtree_4.addTo(map);
+        const url = {"Nominatim OSM": "https://nominatim.openstreetmap.org/search?format=geojson&addressdetails=1&",
+        "France BAN": "https://api-adresse.data.gouv.fr/search/?"}
+        var photonControl = L.control.photon({
+            url: url["Nominatim OSM"],
+            feedbackLabel: '',
+            position: 'topleft',
+            includePosition: true,
+            initial: true,
+            // resultsHandler: myHandler,
+        }).addTo(map);
+        photonControl._container.childNodes[0].style.borderRadius="10px"
+        // Create a variable to store the geoJSON data
+        var x = null;
+        // Create a variable to store the marker
+        var marker = null;
+        // Add an event listener to the Photon control to create a marker from the returned geoJSON data
+        var z = null;
+        photonControl.on('selected', function(e) {
+            console.log(photonControl.search.resultsContainer);
+            if (x != null) {
+                map.removeLayer(obj3.marker);
+                map.removeLayer(x);
+            }
+            obj2.gcd = e.choice;
+            x = L.geoJSON(obj2.gcd).addTo(map);
+            var label = typeof obj2.gcd.properties.label === 'undefined' ? obj2.gcd.properties.display_name : obj2.gcd.properties.label;
+            obj3.marker = L.marker(x.getLayers()[0].getLatLng()).bindPopup(label).addTo(map);
+            map.setView(x.getLayers()[0].getLatLng(), 17);
+            z = typeof e.choice.properties.label === 'undefined'? e.choice.properties.display_name : e.choice.properties.label;
+            console.log(e);
+            e.target.input.value = z;
+        });
+        var search = document.getElementsByClassName("leaflet-photon leaflet-control")[0];
+        search.classList.add("leaflet-control-search")
+        search.style.display = "flex";
+        search.style.backgroundColor="rgba(255,255,255,0.5)" 
+
+        // Create the new button element
+        var button = document.createElement("div");
+        button.id = "gcd-button-control";
+        button.className = "gcd-gl-btn fa fa-search search-button";
+
+        // Insert the button at the beginning of the search control
+        search.insertBefore(button, search.firstChild);
+        last = search.lastChild;
+        last.style.display = "none";
+        button.addEventListener("click", function (e) {
+            if (last.style.display === "none") {
+                last.style.display = "block";
+            } else {
+                last.style.display = "none";
+            }
+        });
+        setBounds();
+        </script>
+    </body>
+</html>
